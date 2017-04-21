@@ -1,3 +1,4 @@
+#!/bin/bash
 
 if [ $0 = "/usr/bin/bash" ]; then
    export TERM_DIR="/c"
@@ -20,6 +21,20 @@ function aws-prof {
     jq '.[] | .AccessKey.UserName' ${TERM_DIR}/cygwin64/home/Will/.aws/$2
   else
     jq '.[] | select(.AccessKey.UserName=="'$1'") | .AccessKey' ${TERM_DIR}/cygwin64/home/Will/.aws/$2
+  fi
+}
+
+function stash {
+  scmd=$1
+  i=$2
+  if [ -z "${scmd}" ]; then
+    git stash
+  elif [ ${scmd} == "show" ]; then
+    echo "git stash show -p stash@{${i}}"
+    git stash show -p stash@{${i}}
+  else
+    echo "git stash "${scmd}
+    git stash ${scmd}
   fi
 }
 
