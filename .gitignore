@@ -1,0 +1,14 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!.bash*
+!README*
+
+# etc...
+.bash_history
+.bash_profile
+
+# ...even if they are in subdirectories
+!*/*
