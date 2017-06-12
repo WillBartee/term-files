@@ -37,7 +37,7 @@ function stash {
     git stash ${scmd}
   fi
 }
-
+alias sqlstart='mysqld_safe &'
 function sqldown {
   root_pswd=$1
   mysqladmin -uroot --password=${root_pswd} shutdown
@@ -116,6 +116,7 @@ alias gpo='git pull origin master'
 alias gpu='git push origin master'
 alias log='git log -10'
 alias master='git checkout master'
+export GIT_EDITOR="nano"
 
 ## Maven
 alias minstall='mvn clean install -Dproject.build.sourceEncoding=UTF-8'
