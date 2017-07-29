@@ -38,9 +38,15 @@ function stash {
   fi
 }
 
+alias sqlstart='mysqld_safe &'
 function sqldown {
   root_pswd=$1
-  mysqladmin -uroot --password=${root_pswd} shutdown
+  if [ -z "${root_pswd}" ] ; then
+    echo Attempting to get pass from secrets.yaml
+    root_pswd=`cat secrets.yaml | grep 'root' | awk '{print $2}' | tr -d '\r'`
+    echo root_pwd = "${root_pswd}"
+  fi
+  mysqladmin -uroot --password="${root_pswd}" shutdown
 }
 
 function workhorse {
@@ -116,6 +122,7 @@ alias gpo='git pull origin master'
 alias gpu='git push origin master'
 alias log='git log -10'
 alias master='git checkout master'
+source ~/bin/git-completion.bash
 
 ## Maven
 alias minstall='mvn clean install -Dproject.build.sourceEncoding=UTF-8'
