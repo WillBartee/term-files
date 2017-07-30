@@ -1,8 +1,11 @@
-export PATH=/usr/local/bin:/bin:$PATH
+export PATH=/usr/local/bin:/bin:${HOME}/bin:$PATH
 export HISTSIZE=999999
 export HISTCONTROL=erasedups
 export HISTTIMEFORMAT="%d/%m/%y %T "
 shopt -s histappend
+shopt -s cdspell
+shopt -s nocaseglob
+shopt -s dotglob
 
 # Setup terminal and commands
 source ~/.bash_colors
