@@ -119,10 +119,13 @@ alias s3del='s3cmd del s3://'
 alias giff='git diff'
 alias status='git status'
 alias fetch='git fetch --all'
-alias gpo='git pull origin master'
+alias gpo='git pull origin'
+alias gpom='git pull origin master'
 alias gpu='git push origin master'
+alias gco='git checkout'
 alias log='git log -10'
 alias master='git checkout master'
+alias stage='git checkout stage'
 
 # Try to get the git completion if it doesn't exist.
 if [ ! -f ~/bin/git-completion.bash ] && [ `which curl` ] ; then
@@ -146,3 +149,6 @@ hgrep() {  $( history | grep $1 ) ; }
 
 alias hg='history | grep'
 alias va='vagrant'
+alias envsort='env | sort'
+alias novastart='pm2 startOrRestart config/default.json  --watch . --force'
+alias log-graph='git log --graph --oneline --all'

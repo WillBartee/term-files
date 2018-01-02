@@ -1,6 +1,6 @@
 export PATH=/usr/local/bin:/bin:${HOME}/bin:$PATH
 export HISTSIZE=999999
-export HISTCONTROL=erasedups
+export HISTCONTROL=ignoredups:erasedups
 export HISTTIMEFORMAT="%d/%m/%y %T "
 shopt -s histappend
 shopt -s cdspell
