@@ -1,3 +1,5 @@
 node() {
-	print 'YOLO!'
+	stage('First') {
+		print 'YOLO!'
+	}
 }
