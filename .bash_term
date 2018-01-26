@@ -1,6 +1,6 @@
 parse_git_branch() {
     BRANCH_NAME=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
-    if [ $BRANCH_NAME = "master" ] ; then
+    if [ "$BRANCH_NAME" = "master" ] ; then
       echo -ne $RED
     fi
     echo -ne $BRANCH_NAME$NONE
