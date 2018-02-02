@@ -1,32 +1,35 @@
-parse_git_branch() {
-    BRANCH_NAME=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
-    if [ $BRANCH_NAME = "master" ] ; then
-      echo -ne $RED
-    fi
-    echo -ne $BRANCH_NAME$NONE
+OPEN_BRACKET="$LCYAN[$NONE"
+CLOSE_BRACKET="$LCYAN]$NONE"
+
+function parse_git_branch() {
+  BRANCH_NAME=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+  if [ "${BRANCH_NAME}" = "master" ] ; then
+    BRANCH_NAME=$RED$BRANCH_NAME
+  fi
+  if [ "${BRANCH_NAME}" != "" ] ; then
+    echo -ne $OPEN_BRACKET$BRANCH_NAME$CLOSE_BRACKET
+  fi
 }
 
-numFiles() {
+function numFiles() {
 	ls -1a | wc -l | sed 's: ::g'
 }
 
-fileSize() {
+function fileSize() {
 	ls -lah | grep -m 1 total | sed 's/total //'
 }
 
-parseCygPath() {
+function parseCygPath() {
   pwd | sed 's/\/cygdrive\/c\///'
 }
 
 TERM_TITLE="\e]0;\$(parseCygPath)\a"
-OPEN_BRACKET="$LCYAN[$NONE"
-CLOSE_BRACKET="$LCYAN]$NONE"
 
 PROMPT_PROC_CT="$OPEN_BRACKET$YELLOW\j$CLOSE_BRACKET"
 PROMPT_HIST_NUM="$OPEN_BRACKET$CYAN\!$CLOSE_BRACKET"
 PROMPT_USER="$YELLOW\u$DGRAY@$YELLOW\h$NONE "
 PROMPT_DIR="$LCYAN\$(parseCygPath)$NONE \$(numFiles) files, \$(fileSize)b "
-PROMPT_BRANCH="$OPEN_BRACKET\$(parse_git_branch)$CLOSE_BRACKET"
+PROMPT_BRANCH="\$(parse_git_branch)"
 
 if [ $0 = "/usr/bin/bash" ]; then
   echo 'This is Git Bash'
