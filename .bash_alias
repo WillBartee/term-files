@@ -32,6 +32,9 @@ function stash {
   elif [ ${scmd} == "show" ]; then
     echo "git stash show -p stash@{${i}}"
     git stash show -p stash@{${i}}
+  elif [ ${scmd} == "drop" ]; then
+    echo "git stash drop stash@{${i}}"
+    git stash drop -p stash@{${i}}
   else
     echo "git stash "${scmd}
     git stash ${scmd}
@@ -119,6 +122,7 @@ alias s3del='s3cmd del s3://'
 alias giff='git diff'
 alias status='git status'
 alias fetch='git fetch --all'
+alias tree='git log --oneline --graph --decorate --all'
 alias gpo='git pull origin'
 alias gpom='git pull origin master'
 alias gpu='git push origin master'
@@ -129,10 +133,7 @@ alias stage='git checkout stage'
 alias branchhist='git for-each-ref --sort=committerdate refs/heads/ --format="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"'
 
 # Try to get the git completion if it doesn't exist.
-if [ ! -f ~/bin/git-completion.bash ] && [ `which curl` ] ; then
-  curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/bin/git-completion.bash
-fi
-source ~/bin/git-completion.bash
+
 export GIT_EDITOR="nano"
 
 ## Maven

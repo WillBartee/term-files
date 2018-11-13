@@ -20,7 +20,7 @@ function fileSize() {
 }
 
 function parseCygPath() {
-  pwd | sed 's/\/cygdrive\/c\///'
+  pwd | sed 's/\/cygdrive\/c\///' | sed 's/Workspaces\///'
 }
 
 TERM_TITLE="\e]0;\$(parseCygPath)\a"
