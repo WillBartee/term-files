@@ -1,16 +1,16 @@
 #!/bin/bash
 
 if [ $0 = "/usr/bin/bash" ]; then
-   export TERM_DIR="/c"
+  export TERM_DIR="/c"
+elif [ $0 = "-bash" ]; then
+  export TERM_DIR="/mnt/c"
+elif [ $0 = "bash" ]; then
+  export TERM_DIR="/mnt/c"
 else
-  if [ $0 = "bash" ]; then
-     export TERM_DIR="/mnt/c"
+  if [ $0 = "/bin/bash" ]; then
+    export TERM_DIR="/mnt/c"
   else
-    if [ $0 = "/bin/bash" ]; then
-       export TERM_DIR="/mnt/c"
-    else
-       export TERM_DIR="/cygdrive/c"
-    fi
+    export TERM_DIR="/cygdrive/c"
   fi
 fi
 
