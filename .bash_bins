@@ -1,0 +1,25 @@
+if [ ! -d ${HOME}/bin ] ; then
+  mkdir ${HOME}/bin
+fi
+
+if [ `which curl` ] ; then
+  DL_ER='curl'
+  DL_OPER='-o'
+elif [ `which wget` ] ; then
+  DL_ERR='wget'
+  DL_OPER='-O'
+else
+  echo "Unable to locate download program";
+fi
+
+if [ ! -f ${HOME}/bin/git-completion.bash ] ; then
+  if [ -z ${DL_ER} ] ; then
+    GIT_SCRIPT_LOCATION="https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+    ${DL_ER} ${GIT_SCRIPT_LOCATION} ${DL_OPER} ${HOME}/bin/git-completion.bash
+    source ${HOME}/bin/git-completion.bash
+  else
+    echo 'Unable to source the git completion script';
+  fi
+else
+  source ${HOME}/bin/git-completion.bash
+fi
