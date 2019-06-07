@@ -1,28 +1,26 @@
 #!/bin/bash
 
-if [ $0 = "/usr/bin/bash" ]; then
-  export TERM_DIR="/c"
-elif [ $0 = "-bash" ]; then
-  export TERM_DIR="/mnt/c"
-elif [ $0 = "bash" ]; then
-  export TERM_DIR="/mnt/c"
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+echo Assuming environment to be \"${machine}\"
+
+if [ $machine == "Cygwin" ] ; then
+  TERM_DIR="/cygdrive/c"
+elif [ $0 = "/usr/bin/bash" ]; then
+  TERM_DIR="/c"
+elif [ $0 = "-bash" ] || [ $0 = "bash" ] || [ $0 = "/bin/bash" ]; then
+  TERM_DIR="/mnt/c"
 else
-  if [ $0 = "/bin/bash" ]; then
-    export TERM_DIR="/mnt/c"
-  else
-    export TERM_DIR="/cygdrive/c"
-  fi
+  TERM_DIR="/cygdrive/c"
 fi
 
-function aws-prof {
-  username=$1
-  filename=$2
-  if [ ${username} == "list" ]; then
-    jq '.[] | .AccessKey.UserName' ${TERM_DIR}/cygwin64/home/Will/.aws/$2
-  else
-    jq '.[] | select(.AccessKey.UserName=="'$1'") | .AccessKey' ${TERM_DIR}/cygwin64/home/Will/.aws/$2
-  fi
-}
+# export TERM_DIR # Uncomment if ihis value is used by another script
 
 function stash {
   scmd=$1
@@ -53,23 +51,9 @@ function sqldown {
   mysqladmin -uroot --password="${root_pswd}" shutdown
 }
 
-function workhorse {
-  cd ${TERM_DIR}/Workspaces
-  vagrant up
-  vagrant ssh
-}
-
-function env-builder {
-  cd ${TERM_DIR}/Workspaces/nejm/env-builder
-  vagrant up
-  vagrant ssh
-}
-
 ## Keeping things organized.
-alias ls='ls -la --color=auto'
-alias ll='ls -l'
-alias la='ls -A'
-alias rm='mv -t ~/Trash/files'
+alias ls='/bin/ls -la --color=auto'
+alias la='/bin/ls -A'
 alias cp='cp -i'
 alias mv='mv -i'
 alias mkdir='mkdir -p -v'
@@ -78,6 +62,9 @@ alias du='du -h -c'
 alias clear='printf "\033c"'
 alias reload='source ~/.bashrc'
 alias biggest='BLOCKSIZE=1048576; du -x | sort -nr | head -10'
+
+alias hg='history | grep'
+alias envsort='env | sort'
 
 ## Moving around & all that jazz
 alias back='cd $OLDPWD'
@@ -92,65 +79,44 @@ alias ......="cd ../../../../.."
 export PATH=${TERM_DIR}/Users/Will/AppData/Roaming/npm:$PATH
 
 ## Dir shortcuts
-alias documents='cd ${TERM_DIR}/Users/Will/Documents'
-alias downloads='cd ${TERM_DIR}/Users/Will/Downloads'
+alias documents='cd ${USERPROFILE}/Documents'
+alias downloads='cd ${USERPROFILE}/Downloads'
 alias work='cd ${TERM_DIR}/Workspaces'
-alias cloud='cd ${TERM_DIR}/Workspaces/ithaka/'
-alias mapper='cd ${TERM_DIR}/Workspaces/ithaka/site-mapper'
-alias ss='cd ${TERM_DIR}/Workspaces/ithaka/SearchServices'
-alias gate='cd ${TERM_DIR}/Workspaces/ithaka/search-gateway'
-alias index='cd ${TERM_DIR}/Workspaces/ithaka/index-service2'
-alias seas='cd ${TERM_DIR}/Workspaces/ithaka/seas'
-alias deposit='cd ${TERM_DIR}/Workspaces/ithaka/Deposits-Packaging'
-alias mobile='cd ${TERM_DIR}/Workspaces/ithaka/bolt-mobile-service'
-alias follow='cd ${TERM_DIR}/Workspaces/ithaka/follow-logs'
-alias que='cd ${TERM_DIR}/Workspaces/ithaka/Quercus'
-alias nejm='cd ${TERM_DIR}/Workspaces/nejm'
+
 alias swp='cd ${TERM_DIR}/Workspaces/cccco/swp'
 alias swps='cd ${TERM_DIR}/Workspaces/cccco/swp-service'
-alias pdfr='cd ${TERM_DIR}/Workspaces/cccco/pdf-printer'
+alias novastart='pm2 startOrRestart ./config/default.js --only nova-service --watch . --force'
 
-## Consider making scripts for s3cmd
-alias sls='s3cmd ls s3://\!*'
-alias s3get='s3cmd get s3://'
-alias s3ls='s3cmd ls s3://'
-alias s3cp='s3cmd cp s3://'
-alias s3mv='s3cmd mv s3://'
-alias s3del='s3cmd del s3://'
+alias datad='cd ${TERM_DIR}/Workspaces/data-platform/dp-doc'
 
 ## Git shortcuts
 alias giff='git diff'
 alias status='git status'
+alias gstat='git status -s'
 alias fetch='git fetch --all'
 alias tree='git log --oneline --graph --decorate --all'
 alias gpo='git pull origin'
 alias gpom='git pull origin master'
 alias gpu='git push origin master'
 alias gco='git checkout'
+alias gnb='git checkout -b'
 alias log='git log -10'
 alias master='git checkout master'
 alias stage='git checkout stage'
+alias dev='git checkout dev'
 alias branchhist='git for-each-ref --sort=committerdate refs/heads/ --format="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"'
 
-# Try to get the git completion if it doesn't exist.
 
-export GIT_EDITOR="nano"
-
-## Maven
-alias minstall='mvn clean install -Dproject.build.sourceEncoding=UTF-8'
-alias minstallnotest='mvn clean install -DskipTests=true'
-
-## ANTLR
-alias antlr4='java -Xmx500M -cp "/usr/local/lib/antlr-4.5-complete.jar:$CLASSPATH" org.antlr.v4.Tool'
-alias grun='java org.antlr.v4.runtime.misc.TestRig'
-
-## Java switching
-alias setJdk8='export JAVA_HOME=/cygdrive/c/Program\ Files/Java/jdk1.8.0_60/jre'
-
-hgrep() {  $( history | grep $1 ) ; }
-
-alias hg='history | grep'
-alias va='vagrant'
-alias envsort='env | sort'
-alias novastart='pm2 startOrRestart config/default.json  --watch . --force'
-alias log-graph='git log --graph --oneline --all'
+function ggstat() {
+  FIRST_WD=$PWD
+  for CUR_WD in `/bin/ls -1 ..` ; do
+    if [[ -d ../$CUR_WD ]] ; then
+      cd ../$CUR_WD;
+      if [ `gstat 2> /dev/null | wc -l` -gt 0 ] ; then
+        echo ---------------$CUR_WD------------------;
+        gstat ; echo ; echo ;
+      fi
+      cd $FIRST_WD;
+    fi
+  done
+}

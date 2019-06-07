@@ -1,39 +1,49 @@
-OPEN_BRACKET="$LCYAN[$NONE"
-CLOSE_BRACKET="$LCYAN]$NONE"
+OPEN_BRACKET="$(LCYAN)[$(NONE)"
+CLOSE_BRACKET="$(LCYAN)]$(NONE)"
+
+function git_status_count() {
+  STATUS_LINE_COUNT=`git status -suno 2> /dev/null | wc -l`
+  if [ $STATUS_LINE_COUNT -gt 0 ] ; then
+    echo -ne $(NONE):$(YELLOW)$STATUS_LINE_COUNT
+  fi
+}
 
 function parse_git_branch() {
-  BRANCH_NAME=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+  BRANCH_NAME=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
   if [ "${BRANCH_NAME}" = "master" ] ; then
-    BRANCH_NAME=$RED$BRANCH_NAME
+    BRANCH_NAME=$(RED)$BRANCH_NAME
   fi
   if [ "${BRANCH_NAME}" != "" ] ; then
-    echo -ne $OPEN_BRACKET$BRANCH_NAME$CLOSE_BRACKET
+    echo -ne $OPEN_BRACKET$BRANCH_NAME$(git_status_count)$CLOSE_BRACKET
   fi
 }
 
-function numFiles() {
-	ls -1a | wc -l | sed 's: ::g'
+function itemCount() {
+  echo -ne "$((`/bin/ls -1a | wc -l | sed 's: ::g'` - 2)) items"
 }
 
-function fileSize() {
-	ls -lah | grep -m 1 total | sed 's/total //'
+function itemSize() {
+	/bin/ls -lah | grep -m 1 total | sed 's/total //'
 }
 
 function parseCygPath() {
-  pwd | sed 's/\/cygdrive\/c\///' | sed 's/Workspaces\///'
+  pwd | sed 's/\/cygdrive\/c\///' | sed 's/Workspaces\///' | sed "s/Users\/${USERNAME}\///"
 }
 
 TERM_TITLE="\e]0;\$(parseCygPath)\a"
 
-PROMPT_PROC_CT="$OPEN_BRACKET$YELLOW\j$CLOSE_BRACKET"
-PROMPT_HIST_NUM="$OPEN_BRACKET$CYAN\!$CLOSE_BRACKET"
-PROMPT_USER="$YELLOW\u$DGRAY@$YELLOW\h$NONE "
-PROMPT_DIR="$LCYAN\$(parseCygPath)$NONE \$(numFiles) files, \$(fileSize)b "
-PROMPT_BRANCH="\$(parse_git_branch)"
+PROMPT_PROC_CT="$OPEN_BRACKET$(YELLOW)\j$CLOSE_BRACKET"
+PROMPT_HIST_NUM="$OPEN_BRACKET$(CYAN)\!$CLOSE_BRACKET"
+PROMPT_USER="$(YELLOW)\u$(DGRAY)@$(YELLOW)\h$(NONE) "
+PROMPT_DIR="$(LCYAN)\$(parseCygPath)$(NONE) \$(itemCount) @ \$(itemSize)b "
+PROMPT_GIT="\$(parse_git_branch)"
 
 if [ $0 = "/usr/bin/bash" ]; then
-  echo 'This is Git Bash'
-  export PS1="\n$LCYAN[GitBash]$NONE\[\e[30;1m\]\[\016\]\[\017\](\[\e[34;1m\]\u@\h\[\e[30;1m\])-(\[\e[34;1m\]\j\[\e[30;1m\])-(\[\e[34;1m\]\@ \d\[\e[30;1m\])->\[\e[30;1m\]\n\[\016\]\[\017\](\[\[\e[32;1m\]\w\[\e[30;1m\])[\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')](\[\e[32;1m\]\$(/bin/ls -1 | /usr/bin/wc -l | /bin/sed 's: ::g') files, \$(/bin/ls -lah | /bin/grep -m 1 total | /bin/sed 's/total //')b\[\e[30;1m\])--> \[\e[0m\]"
+  # It's uncear if this is still functional... plus who's using git bash anyways...
+  echo 'This is Git Bash! (kicks minTTY off a cliff...)'
+  export PS1="\n$(LCYAN)[GitBash]$(NONE)\[\e[30;1m\]\[\016\]\[\017\](\[\e[34;1m\]\u@\h\[\e[30;1m\])-(\[\e[34;1m\]\j\[\e[30;1m\])-(\[\e[34;1m\]\@ \d\[\e[30;1m\])->\[\e[30;1m\]\n\[\016\]\[\017\](\[\[\e[32;1m\]\w\[\e[30;1m\])[\$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')](\[\e[32;1m\]\$(/bin/ls -1 | /usr/bin/wc -l | /bin/sed 's: ::g') files, \$(/bin/ls -lah | /bin/grep -m 1 total | /bin/sed 's/total //')b\[\e[30;1m\])--> \[\e[0m\]"
 else
-	export PS1="\n$TERM_TITLE$PROMPT_PROC_CT$PROMPT_HIST_NUM $PROMPT_USER$PROMPT_DIR$PROMPT_BRANCH \n$ "
+  ## I stopped caring about what usr I am in cygwin...
+	export PS1="\n$TERM_TITLE$PROMPT_PROC_CT$PROMPT_HIST_NUM$PROMPT_GIT $PROMPT_DIR\n$ "
+	# export PS1="\n$TERM_TITLE$PROMPT_PROC_CT$PROMPT_HIST_NUM$PROMPT_GIT $PROMPT_USER$PROMPT_DIR\n$ "
 fi
