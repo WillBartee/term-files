@@ -65,6 +65,7 @@ alias biggest='BLOCKSIZE=1048576; du -x | sort -nr | head -10'
 
 alias hg='history | grep'
 alias envsort='env | sort'
+alias pathprint='echo $PATH | sed "s/:/\n/g" '
 
 ## Moving around & all that jazz
 alias back='cd $OLDPWD'
@@ -75,17 +76,16 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
-## Add Important Path Values
-export PATH=${TERM_DIR}/Users/Will/AppData/Roaming/npm:$PATH
 
 ## Dir shortcuts
 alias documents='cd ${USERPROFILE}/Documents'
 alias downloads='cd ${USERPROFILE}/Downloads'
 alias work='cd ${TERM_DIR}/Workspaces'
+alias garage='cd ${TERM_DIR}/Workspaces/garage'
 
 alias swp='cd ${TERM_DIR}/Workspaces/cccco/swp'
 alias swps='cd ${TERM_DIR}/Workspaces/cccco/swp-service'
-alias novastart='pm2 startOrRestart ./config/default.js --only nova-service --watch . --force'
+alias novastart='pm2 startOrRestart ./config/default.json --only nova-service --watch . --force'
 
 alias datad='cd ${TERM_DIR}/Workspaces/data-platform/dp-doc'
 
@@ -106,6 +106,9 @@ alias stage='git checkout stage'
 alias dev='git checkout dev'
 alias branchhist='git for-each-ref --sort=committerdate refs/heads/ --format="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"'
 
+alias dc='docker-compose'
+
+alias atomcreds='(cd ~/.aws ; atom credentials )'
 
 function ggstat() {
   FIRST_WD=$PWD
